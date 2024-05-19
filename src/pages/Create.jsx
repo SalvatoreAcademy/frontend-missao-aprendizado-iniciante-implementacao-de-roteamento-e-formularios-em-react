@@ -1,9 +1,37 @@
+import { toast } from "react-toastify"
+import { Api } from "../api/api"
+import { useNavigate } from "react-router-dom"
+
 export default function Create() {
+  const navigate = useNavigate()
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+
+    const devmon = {
+      nome: event.target.nome.value,
+      imagem: event.target.imagem.value,
+      evoluiPara: event.target.evoluiPara.value
+    }
+
+    const apiUrl = Api.personagem.create()
+
+    const response = await Api.buildApiPostRequest(apiUrl, devmon)
+
+    if (response.ok) {
+      toast.success('DevMon criado com sucesso!')
+      navigate('/')
+    } else {
+      const body = await response.json()
+      toast.error('Erro ao criar DevMon: ' + body.error)
+    }
+  }
+
   return (
     <div>
       <h1>Criar DevMon</h1>
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="nome">Nome*:</label><br />
           <input type="text" id="nome" name="nome" placeholder="Insira o nome" />
